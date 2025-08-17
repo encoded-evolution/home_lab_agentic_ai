@@ -1,0 +1,194 @@
+{
+  "name": "PostgresTablesQuery",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7395735f-6d5b-4c7f-834a-f75d4b3c30a0",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "table_name"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ba4435c5-c06a-4c62-a11e-000b7b080b82",
+      "name": "Summarize",
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "path": "d8db9fa3-04fe-43c8-9acf-e1912463477f",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "d42236e6-7efd-44f2-b1a8-2974c416f76c",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        64
+      ],
+      "webhookId": "d8db9fa3-04fe-43c8-9acf-e1912463477f",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "TdxH4QK0MRssvbCh",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM basic_f1",
+        "options": {}
+      },
+      "id": "8c9dbdab-e999-448b-828b-1dac453c83b4",
+      "name": "Read table",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -176,
+        96
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "nKR3UhJp31oD1D5S",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT table_schema, table_name, table_type\nFROM information_schema.tables\nWHERE table_schema = 'public'\n    AND table_type = 'BASE TABLE'\nORDER BY table_name;",
+        "options": {}
+      },
+      "id": "215466c2-ff38-4bc3-aac2-0d8f0856a91f",
+      "name": "Get all tables",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -176,
+        -64
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "nKR3UhJp31oD1D5S",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM public.basic_f1;",
+        "options": {}
+      },
+      "id": "31f31564-acfc-492d-8c5f-5644c8ad2248",
+      "name": "Delete all table records (CAUTION)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -176,
+        272
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "nKR3UhJp31oD1D5S",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get all tables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read table": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all tables": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete all table records (CAUTION)": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c2e40a33-d8c8-434c-b82b-6093d7ec99f3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a819d7cd38e9101be2e496298e8bf426ce9cdf78d2af35ddf44c6ad25d50158b"
+  },
+  "id": "tUEBETfaNkoofFJf",
+  "tags": []
+}

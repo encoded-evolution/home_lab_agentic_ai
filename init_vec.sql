@@ -1,0 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+LOAD 'vector';
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+LOAD 'uuid-ossp';

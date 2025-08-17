@@ -1,0 +1,339 @@
+{
+  "name": "What Are We Doing",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2e45eb26-94c9-49b5-97f8-0b6b5586eea9",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -512,
+        -80
+      ],
+      "webhookId": "0949763f-f3f7-46bf-8676-c050d92e6966"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Determine if the user wants to pull a new website into RAG datastore, or if the user is querying the existing RAG datastore.  \n\nIf a user prompt includes a url, then use the tool \"Call n8n Workflow Crawl4AIAgent\".  Usually a user prompt will indicate that a site should be fetched, scraped, or other terms that indicate collection and the user will include what appears to be a website. The prompt will include the url for the documentation website they want.\n\nIf the user prompt indicates that a reference lookup is needed, Tse the tool \"Call n8n Workflow QueryRAG\".  If a user wants to query an existing RAG datastore, they usually won't include the website url.  They will ask a question about how to do something that is explained in the RAG datastore. Or they may ask to use the documentation, or to look up in the documentation, or similar phrasing.  \n\nIf you don't understand what the user wants, respond that you don't understand"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -160
+      ],
+      "id": "cb51ba8a-db9f-4cc0-9b72-6f5402fefd23",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        64
+      ],
+      "id": "aaabbdec-71cc-4374-9be9-9f498b0a09d6",
+      "name": "Ollama Chat Model3",
+      "credentials": {
+        "ollamaApi": {
+          "id": "U5zHY9FP46QpGa2j",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "If the user prompt is recognized as a query into the documentation, this tool will call a query to a RAG.  If a user wants to query an existing RAG datastore, they usually won't include the website.  They will ask a question about how to do something that is explained in the RAG datastore.",
+        "workflowId": {
+          "__rl": true,
+          "value": "cC6Zxs1kOnLRwk4F",
+          "mode": "list",
+          "cachedResultName": "QueryRAG"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $json.sessionId }}",
+            "chatInput": "={{ $json.chatInput }}",
+            "action": "={{ $json.action }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatInput",
+              "displayName": "chatInput",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        80
+      ],
+      "id": "bb79fe95-9359-40f3-8476-691525510c26",
+      "name": "Call n8n Workflow QueryRAG",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "description": "If the user prompt is recognized as a query into the documentation, this tool will call a query to a RAG. Usually a user prompt will indicate that a site should be fetched, scraped, or other terms that indicate collection and the user will include what appears to be a website. ",
+        "workflowId": {
+          "__rl": true,
+          "value": "qB36CchcMC82hch1",
+          "mode": "list",
+          "cachedResultName": "Crawl4AIAgent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $json.sessionId }}",
+            "chatInput": "={{ $json.chatInput }}",
+            "action": "={{ $json.action }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chatInput",
+              "displayName": "chatInput",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        80
+      ],
+      "id": "c306db01-0fb5-44ae-8420-89c9b487636d",
+      "name": "Call n8n Workflow Crawl4AIAgent",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "start",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "009dbb49-9427-45d1-9d7c-4fd7f439da58",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        -240
+      ],
+      "webhookId": "4a839da9-b8a2-45f8-bcaf-c484f9a5912d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9a9a245e-f1a1-4282-bb02-a81ffe629f0f",
+              "name": "chatInput",
+              "value": "={{ $json?.chatInput || $json.body.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "b80831d8-c653-4203-8706-adedfdb98f77",
+              "name": "sessionId",
+              "value": "={{ $json?.sessionId || $json.body.sessionId}}",
+              "type": "string"
+            },
+            {
+              "id": "d4182699-c6a4-43e8-83a8-840295c27bc0",
+              "name": "action",
+              "value": "={{ $json?.action || \"webhook\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e839c5f-8186-4b98-980c-ec59a10037c8",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e23ce43a-83fd-4c2f-85a2-5b6485ea91c2",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        368,
+        -160
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow QueryRAG": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow Crawl4AIAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6830f5ef-ecc6-424f-8a15-1df07e767d07",
+  "meta": {
+    "instanceId": "a819d7cd38e9101be2e496298e8bf426ce9cdf78d2af35ddf44c6ad25d50158b"
+  },
+  "id": "MaSA6WsYOgJJvziC",
+  "tags": []
+}

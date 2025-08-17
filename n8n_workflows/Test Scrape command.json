@@ -1,0 +1,180 @@
+{
+  "name": "Test Scrape command",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -736,
+        -16
+      ],
+      "id": "4defeb92-1aca-4fe4-95b7-70605ee3c866",
+      "name": "When chat message received",
+      "webhookId": "488e7d93-42e1-47be-87e0-ba4785e48f88"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "A user may be wanting to import web documentation into the RAG datastore. So, look for a user request that appears to indicate that you should get or scrape from a url that is included in the incoming chat message.  Return only two items in JSON format: the url as output and the url with sitemap.xml postpended to it.  Only add one slash character after the base website address, whether or not the user prompt included it.\n\nExample:\nInput:\nscrape this website something.com\n\nOutput:\n{\n\"url\": \"https://something.com\",\n\"url_with_sitemap\": \"https://something.com/sitemap.xml\"\n}\n\nReplace \"something.com\" with the url provided in the input.  Include the close curly bracket in the json output, make sure the json is well formed per the example output above before returning a value.  Do not include any helpful messages or explanatory text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -528,
+        -16
+      ],
+      "id": "6856e7d2-c394-4774-9ae4-f4314524233e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "mistral:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        192
+      ],
+      "id": "e07fcdce-14dd-46eb-b6d4-1bc6afa39d47",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "U5zHY9FP46QpGa2j",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output.url_with_sitemap }}",
+        "options": {}
+      },
+      "id": "a9b9f26b-0af7-4a6c-9abc-e04838a9c4d0",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n\"url\": \"https://something.com\",\n\"url_with_sitemap\": \"https://something.com/sitemap.xml\"\n}",
+        "options": {
+          "systemPromptTemplate": "=You are an expert extraction algorithm.\nOnly extract relevant information from the text.\nIf you do not know the value of an attribute asked to extract, you may omit the attribute's value.\nConvert Text to well-formed json using the example. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -16
+      ],
+      "id": "1a3ff091-e2db-4707-bcf9-cd43fcf309da",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "model": "mistral:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        176
+      ],
+      "id": "41f48c50-2b25-4f76-9a8f-d2d272b9fe06",
+      "name": "Ollama Chat Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "U5zHY9FP46QpGa2j",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Ollama Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6d426082-e182-4b99-8e29-ad13e863c6f1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a819d7cd38e9101be2e496298e8bf426ce9cdf78d2af35ddf44c6ad25d50158b"
+  },
+  "id": "sRfGUMNeBkJLX1xM",
+  "tags": []
+}

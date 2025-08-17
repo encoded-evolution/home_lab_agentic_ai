@@ -1,0 +1,156 @@
+{
+  "name": "LightRAG_TEST",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        -112
+      ],
+      "id": "d0aab225-8ee5-45e5-9a4a-ae02e9f58e26",
+      "name": "When chat message received",
+      "webhookId": "5509a909-b9aa-4028-95bd-3bcdb4083edb"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You must pass the {{ $json.chatInput }} to the LightRAGquery tool.  Do not add any explanation or descriptive text.  If the answer is not available via th etool, then respond that you do not have reference documentation for the question."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        -112
+      ],
+      "id": "0878e31d-f6da-47f0-b1bb-833ca98a8392",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen3:14b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        96
+      ],
+      "id": "7b500d01-73da-470b-a17f-8d186e3bc49b",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "U5zHY9FP46QpGa2j",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        96
+      ],
+      "id": "61212696-5db5-4af6-9acd-6bd976fd09e1",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:9621/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        48,
+        96
+      ],
+      "id": "3879b518-f012-46bf-9a41-557f33e8953d",
+      "name": "LightRAGquery"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LightRAGquery": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "22ce50f3-8f8d-4d5b-964f-ee54cd32aa50",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a819d7cd38e9101be2e496298e8bf426ce9cdf78d2af35ddf44c6ad25d50158b"
+  },
+  "id": "MzVvKZrNzans6BEc",
+  "tags": []
+}
