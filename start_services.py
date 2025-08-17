@@ -178,6 +178,7 @@ def main():
     args = parser.parse_args()
 
     clone_lightrag_repo()
+    time.sleep(4)
     prepare_lightrag_env()
     clone_crawl4ai_repo()
     prepare_crawl4ai_env()
