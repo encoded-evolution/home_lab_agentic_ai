@@ -6,20 +6,6 @@ ARG SE_NAMESPACE=selenium
 ARG SE_VERSION=latest
 ARG SE_BASE=node-base
 
-
-
-#============================================
-# Install n8n nodes
-#============================================
-
-#FROM n8n.io/n8n:latest
-#USER Admin123@Admin123.com
-#RUN echo "Installing n8n nodes"
-#RUN npm install -g n8n-nodes-query-retriever-rerank
-#RUN npm install -g n8n-nodes-lightrag
-#USER node
-
-
 #============================================
 # Install selenium
 #============================================

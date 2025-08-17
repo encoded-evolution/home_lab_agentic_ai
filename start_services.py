@@ -146,12 +146,21 @@ def install_n8n_nodes(profile=None, environment=None):
 def get_selenium_build_components(profile=None, environment=None):
     """Get the extra build components for Selenium"""
     print("Installing build components for Selenium...")
-    cmd = ["curl", "-o", "chrome-cleanup.conf", "https://github.com/SeleniumHQ/docker-selenium/blob/trunk/NodeChromium/chrome-cleanup.conf"]
-    run_command(cmd)
-    cmd = ["curl", "-o", "chrome-cleanup.sh", "https://github.com/SeleniumHQ/docker-selenium/blob/trunk/NodeChromium/chrome-cleanup.sh"]
-    run_command(cmd)
-    cmd = ["curl", "-o", "wrap_chromium_binary", "https://github.com/SeleniumHQ/docker-selenium/blob/trunk/NodeChromium/wrap_chromium_binary"]
-    run_command(cmd)
+    if not os.path.exists("./chrome-cleanup.conf"):
+        cmd = ["curl", "-o", "chrome-cleanup.conf", "https://raw.githubusercontent.com/SeleniumHQ/docker-selenium/refs/heads/trunk/NodeChromium/chrome-cleanup.conf"]
+        run_command(cmd)
+    else:
+        pass
+    if not os.path.exists("./chrome-cleanup.sh"):
+        cmd = ["curl", "-o", "chrome-cleanup.sh", "https://raw.githubusercontent.com/SeleniumHQ/docker-selenium/refs/heads/trunk/NodeChromium/chrome-cleanup.sh"]
+        run_command(cmd)
+    else:
+        pass
+    if not os.path.exists("./wrap_chromium_binary"):
+        cmd = ["curl", "-o", "wrap_chromium_binary", "https://raw.githubusercontent.com/SeleniumHQ/docker-selenium/refs/heads/trunk/NodeChromium/wrap_chromium_binary"]
+        run_command(cmd)
+    else:
+        pass
 
 def start_selenium(profile=None, environment=None):
     """Starting Selenium"""
