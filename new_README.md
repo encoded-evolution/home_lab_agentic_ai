@@ -12,4 +12,6 @@ once n8n is installed
 	go to community nodes section and download the nodes:
 		n8n-nodes-lightrag
 		n8n-nodes-query-retriever-rerank
-			AI->Other AI nodes->Tools->
+			AI->Other AI nodes->Tools->n8n-nodes-query-retriever-rerank
+			
+LightRAG is effective, and it makes really pretty graphs, but it takes a looong time
