@@ -84,6 +84,7 @@ services:
       - POSTGRES_PORT
       - POSTGRES_USER
       - POSTGRES_PASSWORD
+      - LIGHTRAG_API_KEY
       # - TIKTOKEN_CACHE_DIR=/app/data/tiktoken
     restart: unless-stopped
     extra_hosts:
