@@ -182,16 +182,16 @@ def main():
                       help='Environment to use for Docker Compose (default: private)')
     args = parser.parse_args()
 
+    stop_existing_containers(args.profile)
+
+    prepare_main_env()
+    
     clone_lightrag_repo()
     time.sleep(4)
     prepare_lightrag_env()
     clone_crawl4ai_repo()
     prepare_crawl4ai_env()
 
-    stop_existing_containers(args.profile)
-    
-    prepare_main_env()
-    
     get_selenium_build_components()
     time.sleep(4)
     
