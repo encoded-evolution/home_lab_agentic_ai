@@ -27,13 +27,18 @@ def run_install_workflows(script_path):
     else:
         print("Script executed successfully.")
 
-
-
 def run_command(cmd, cwd=None):
     """Run a shell command and print it."""
     print("Running:", " ".join(cmd))
     return subprocess.run(cmd, cwd=cwd, check=True)
 
+def prepare_main_env():
+    """Copy .env.home_ai to .env in main folder"""
+    env_target_path = os.path.join(".env")
+    env_source_path = os.path.join(".env.home_ai")
+    print("Copying .env.home_ai in root to .env in root...")
+    shutil.copyfile(env_example_path, env_target_path)
+    
 def clone_crawl4ai_repo():
     """Clone the crawl4ai repository using sparse checkout if not already present."""
     if not os.path.exists("crawl4ai"):
@@ -184,6 +189,8 @@ def main():
     prepare_crawl4ai_env()
 
     stop_existing_containers(args.profile)
+    
+    prepare_main_env()
     
     get_selenium_build_components()
     time.sleep(4)
