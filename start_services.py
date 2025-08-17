@@ -37,7 +37,7 @@ def prepare_main_env():
     env_target_path = os.path.join(".env")
     env_source_path = os.path.join(".env.home_ai")
     print("Copying .env.home_ai in root to .env in root...")
-    shutil.copyfile(env_example_path, env_target_path)
+    shutil.copyfile(env_source_path, env_target_path)
     
 def clone_crawl4ai_repo():
     """Clone the crawl4ai repository using sparse checkout if not already present."""
@@ -92,11 +92,15 @@ def prepare_postgres_storage_point():
 
 def stop_existing_containers(profile=None):
     print("Stopping and removing existing containers for the unified project {docker_container_name}...")
-    cmd = ["docker", "compose", "-p", docker_container_name]
-    if profile and profile != "none":
-        cmd.extend(["--profile", profile])
-    cmd.extend(["-f", "docker-compose.yml", "down"])
-    run_command(cmd)
+    try:
+        cmd = ["docker", "compose", "-p", docker_container_name]
+        if profile and profile != "none":
+            cmd.extend(["--profile", profile])
+        cmd.extend(["-f", "docker-compose.yml", "down"])
+        run_command(cmd)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        pass
     try:
         cmd = ["docker", "stop", "selenium_chrome"]
         response = run_command(cmd)
