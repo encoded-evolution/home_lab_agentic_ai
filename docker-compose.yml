@@ -12,7 +12,6 @@ networks:
       # external: true
       driver:  bridge
 
-
 x-n8n: &service-n8n
   image: n8nio/n8n:latest
   # build:
@@ -42,6 +41,9 @@ x-ollama: &service-ollama
   image: ollama/ollama:latest
   container_name: ollama
   restart: unless-stopped
+  env_file:
+    - path: .env
+      required: true
   ports:
     - 11434:11434
   volumes:
@@ -53,6 +55,9 @@ x-init-ollama: &init-ollama
   volumes:
     - ollama_storage:/root/.ollama
   entrypoint: /bin/sh
+  env_file:
+    - path: .env
+      required: true
   environment:
     - OLLAMA_HOST=http://ollama:11434
   command:
@@ -254,10 +259,10 @@ services:
     depends_on: 
       - chrome
 
-configs:
-  qdrant_config:
-    content: |
-      log_level: INFO
+# configs:
+  # qdrant_config:
+    # content: |
+      # log_level: INFO
       
 include:
   - ./crawl4ai/docker-compose.yml
