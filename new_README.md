@@ -58,3 +58,7 @@ begin
   limit match_count;
 end;
 $$;
+
+
+the record_manager db table in postgres is getting two copies of a record for some reason.
+the easiest thing to do is set the file_id and hash to unique in the database, but is there a way to manage it via n8n which is sending the two requests.
