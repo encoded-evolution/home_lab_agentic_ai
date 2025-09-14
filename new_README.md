@@ -62,3 +62,7 @@ $$;
 
 the record_manager db table in postgres is getting two copies of a record for some reason.
 the easiest thing to do is set the file_id and hash to unique in the database, but is there a way to manage it via n8n which is sending the two requests.
+
+embeddings 1536: rjmalagon/gte-qwen2-1.5b-instruct-embed-f16:latest
+
+n8n-nodes-docx-converter to convert word docx to text
